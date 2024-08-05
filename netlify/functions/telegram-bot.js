@@ -1,7 +1,7 @@
 // netlify/functions/telegram-bot.js
 const { Telegraf } = require('telegraf');
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf('7497961026:AAGvq85hScdvvKY6cmJ1rVgq9M6INhpdB9Y');
 
 bot.on('text', (ctx) => {
   ctx.reply('Message received');
