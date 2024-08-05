@@ -1,4 +1,4 @@
-// netlify/functions/telegram-bot.js
+require('dotenv').config();
 const { Telegraf } = require('telegraf');
 
 const bot = new Telegraf('7497961026:AAGvq85hScdvvKY6cmJ1rVgq9M6INhpdB9Y');
