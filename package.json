@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --force",
-    "build": "tsc && GH_PAGES=true vite build",
+    "build": "set GH_PAGES=true && vite build",
     "build:dev": "tsc && vite build",
     "preview": "vite preview"
   },
@@ -14,7 +14,8 @@
     "eruda": "^2.11.2",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
-    "react-json-view": "^1.21.3"
+    "react-json-view": "^1.21.3",
+    "telegraf": "^4.16.3"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
