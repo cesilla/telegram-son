@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 interface NavbarProps {
-  className?: string; // Add className as an optional prop
+  className?: string; 
 }
 
 const Navbar: React.FC<NavbarProps> = ({ className }) => {
