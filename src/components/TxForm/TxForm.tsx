@@ -1,57 +1,49 @@
-import React, {useCallback, useState} from 'react';
-import ReactJson from 'react-json-view';
+import React, { useEffect, useState } from 'react';
 import './style.scss';
-import {SendTransactionRequest, useTonConnectUI, useTonWallet} from "@tonconnect/ui-react";
-
-// In this example, we are using a predefined smart contract state initialization (`stateInit`)
-// to interact with an "EchoContract". This contract is designed to send the value back to the sender,
-// serving as a testing tool to prevent users from accidentally spending money.
-const defaultTx: SendTransactionRequest = {
-	// The transaction is valid for 10 minutes from now, in unix epoch seconds.
-	validUntil: Math.floor(Date.now() / 1000) + 600,
-	messages: [
-
-		{
-			// The receiver's address.
-			address: 'EQCKWpx7cNMpvmcN5ObM5lLUZHZRFKqYA4xmw9jOry0ZsF9M',
-			// Amount to send in nanoTON. For example, 0.005 TON is 5000000 nanoTON.
-			amount: '5000000',
-			// (optional) State initialization in boc base64 format.
-			stateInit: 'te6cckEBBAEAOgACATQCAQAAART/APSkE/S88sgLAwBI0wHQ0wMBcbCRW+D6QDBwgBDIywVYzxYh+gLLagHPFsmAQPsAlxCarA==',
-			// (optional) Payload in boc base64 format.
-			payload: 'te6ccsEBAQEADAAMABQAAAAASGVsbG8hCaTc/g==',
-		},
-
-		// Uncomment the following message to send two messages in one transaction.
-		/*
-    {
-      // Note: Funds sent to this address will not be returned back to the sender.
-      address: 'UQAuz15H1ZHrZ_psVrAra7HealMIVeFq0wguqlmFno1f3B-m',
-      amount: toNano('0.01').toString(),
-    }
-    */
-
-	],
-};
+import { useTonConnectUI, ConnectedWallet } from '@tonconnect/ui-react';
+import { useNavigate } from 'react-router-dom';
 
 export function TxForm() {
-	const [tx, setTx] = useState(defaultTx);
-	const wallet = useTonWallet();
-	const [tonConnectUi] = useTonConnectUI();
+  const [tonConnectUI] = useTonConnectUI();
+  const [wallet, setWallet] = useState<ConnectedWallet | null>(null);
+  const navigate = useNavigate();
 
-	const onChange = useCallback((value: object) => setTx((value as { updated_src: typeof defaultTx }).updated_src), []);
+  useEffect(() => {
+    const handleConnect = async () => {
+      const currentWallet = tonConnectUI.wallet as ConnectedWallet | null;
+      if (currentWallet) {
+        setWallet(currentWallet);
+        navigate('/');
+      }
+    };
+    handleConnect();
+  }, [tonConnectUI, navigate]);
 
-	return (
-		<div className="send-tx-form">
-			<h3>Configure and send transaction</h3>
-			<ReactJson src={defaultTx} theme="ocean" onEdit={onChange} onAdd={onChange} onDelete={onChange} />
-			{wallet ? (
-				<button onClick={() => tonConnectUi.sendTransaction(tx)}>
-					Send transaction
-				</button>
-			) : (
-				<button onClick={() => tonConnectUi.openModal()}>Connect wallet to send the transaction</button>
-			)}
-		</div>
-	);
+  const handleConnect = async () => {
+    await tonConnectUI.connectWallet();
+    const currentWallet = tonConnectUI.wallet as ConnectedWallet | null;
+    if (currentWallet) {
+      setWallet(currentWallet);
+      navigate('/');
+    }
+  };
+
+  const handleDisconnect = async () => {
+    // Your disconnect logic here, if available
+    setWallet(null);
+  };
+
+  return (
+    <div className="connect-wallet-form">
+      <h3>Connect your wallet</h3>
+      {wallet ? (
+        <div>
+          <p>Connected: {wallet.account.address}</p>
+          <button onClick={handleDisconnect}>Disconnect</button>
+        </div>
+      ) : (
+        <button onClick={handleConnect}>Connect Wallet</button>
+      )}
+    </div>
+  );
 }
