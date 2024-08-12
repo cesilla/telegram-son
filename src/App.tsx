@@ -5,7 +5,17 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dil from "./components/dil/dil";
 import { TxForm } from "./components/TxForm/TxForm";
 import MainPage from "./components/main/main";
-import { LanguageProvider } from './components/LanguageContext';
+import { LanguageProvider, useLanguage } from './components/LanguageContext';
+
+function ProtectedRoute({ children }: { children: JSX.Element }) {
+  const { selectedLanguage } = useLanguage();
+
+  if (!selectedLanguage) {
+    return <Dil />; // Redirect to language selection if no language is selected
+  }
+
+  return children;
+}
 
 function App() {
   return (
@@ -56,16 +66,20 @@ function App() {
           }
         ]
       }}
-      actionsConfiguration={{
-        twaReturnUrl: 'https://t.me/tc_twa_demo_bot/start'
-      }}
     >
       <LanguageProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/txform" element={<TxForm selectedLanguage={''} />} />
-            <Route path="/dil" element={<Dil />} />
+            <Route path="/" element={<Dil />} />
+            <Route path="/txform" element={<TxForm selectedLanguage={useLanguage().selectedLanguage} />} />
+            <Route
+              path="/main"
+              element={
+                <ProtectedRoute>
+                  <MainPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Router>
       </LanguageProvider>

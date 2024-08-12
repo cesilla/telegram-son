@@ -1,4 +1,3 @@
-// LanguageContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
 interface LanguageContextType {
@@ -33,3 +32,5 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     </LanguageContext.Provider>
   );
 };
+
+export const useLanguage = () => React.useContext(LanguageContext);

@@ -22,9 +22,15 @@ const MainPage = () => {
     };
   }, [navigate]);
 
+  const handleDisconnect = () => {
+    console.log('Disconnecting wallet');
+    navigate('/txform');
+  };
+
   return (
     <div>
       <h1>Main Page</h1>
+      <button onClick={handleDisconnect}>Disconnect</button>
     </div>
   );
 };
