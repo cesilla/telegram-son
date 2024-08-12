@@ -1,53 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import './LanguageSelector.scss';
+import React, { useContext, useEffect, useState } from 'react';
+import { useTonConnectUI, ConnectedWallet } from "@tonconnect/ui-react";
+import { useNavigate } from 'react-router-dom';
+import { LanguageSelector } from '../LanguageSelector';
+import { LanguageContext } from '../LanguageContext';
 
-const translations = {
-  en: { selectLanguage: "Select Language" },
-  tr: { selectLanguage: "Dil Seç" },
-  es: { selectLanguage: "Seleccionar Idioma" },
-  fr: { selectLanguage: "Choisir la langue" },
-  zh: { selectLanguage: "选择语言" },
-  ar: { selectLanguage: "اختر اللغة" },
-  de: { selectLanguage: "Sprache auswählen" },
-  ru: { selectLanguage: "Выбрать язык" },
-};
-
-type LanguageSelectorProps = {
-  onLanguageChange: (language: string) => void;
-};
-
-export function LanguageSelector({ onLanguageChange }: LanguageSelectorProps) {
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('en'); // Default language is English
+function Dil() {
+  const [tonConnectUI] = useTonConnectUI();
+  const [wallet, setWallet] = useState<ConnectedWallet | null>(null);
+  const { selectedLanguage, setSelectedLanguage } = useContext(LanguageContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem('selectedLanguage');
-    if (storedLanguage) {
-      setSelectedLanguage(storedLanguage);
-    }
-  }, []);
+    const currentWallet = tonConnectUI.wallet as ConnectedWallet | null;
 
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLanguage = e.target.value;
-    setSelectedLanguage(newLanguage);
-    localStorage.setItem('selectedLanguage', newLanguage);
-    onLanguageChange(newLanguage);
+    if (currentWallet && selectedLanguage) {
+      setWallet(currentWallet);
+      navigate('/');
+    } else if (selectedLanguage) {
+      navigate('/txform');
+    }
+  }, [tonConnectUI, navigate, selectedLanguage]);
+
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
+    const currentWallet = tonConnectUI.wallet as ConnectedWallet | null;
+    if (currentWallet) {
+      navigate('/');
+    } else {
+      navigate('/txform');
+    }
   };
 
-  const t = translations[selectedLanguage as keyof typeof translations] || translations.en;
-
   return (
-    <div className="language-selection">
-      <label>{t.selectLanguage}</label>
-      <select value={selectedLanguage} onChange={handleLanguageChange}>
-        <option value="en">English</option>
-        <option value="tr">Türkçe</option>
-        <option value="es">Español</option>
-        <option value="fr">Français</option>
-        <option value="zh">中文</option>
-        <option value="ar">العربية</option>
-        <option value="de">Deutsch</option>
-        <option value="ru">Русский</option>
-      </select>
+    <div>
+      <h2>Language Selection</h2>
+      <LanguageSelector onLanguageChange={handleLanguageChange} />
     </div>
   );
 }
+
+export default Dil;

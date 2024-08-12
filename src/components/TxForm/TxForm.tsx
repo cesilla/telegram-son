@@ -67,7 +67,7 @@ export function TxForm({ selectedLanguage }: TxFormProps) {
     const currentWallet = tonConnectUI.wallet as ConnectedWallet | null;
     if (currentWallet) {
       setWallet(currentWallet);
-      navigate('/');
+      navigate('/main');  
     }
   }, [tonConnectUI, navigate]);
 
@@ -77,7 +77,7 @@ export function TxForm({ selectedLanguage }: TxFormProps) {
       const currentWallet = tonConnectUI.wallet as ConnectedWallet | null;
       if (currentWallet) {
         setWallet(currentWallet);
-        navigate('/');
+        navigate('/main');  // Başarılı bağlantıdan sonra mainpage'e yönlendir
       }
     } catch (error: any) {
       console.error('Connection Error:', error);
@@ -86,7 +86,7 @@ export function TxForm({ selectedLanguage }: TxFormProps) {
   };
 
   const handleDisconnect = async () => {
-    // Disconnect logic here, if available
+    // Bağlantıyı kesme mantığı buraya eklenebilir
     setWallet(null);
   };
 

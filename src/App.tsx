@@ -1,33 +1,11 @@
 import './App.scss';
 import './trackers';
-import { THEME, TonConnectUIProvider, useTonConnectUI, ConnectedWallet } from "@tonconnect/ui-react";
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import { THEME, TonConnectUIProvider } from "@tonconnect/ui-react";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Dil from "./components/dil/dil";
 import { TxForm } from "./components/TxForm/TxForm";
-import Main from "./components/main/main";
-import { useEffect, useState } from 'react';
-
-function AppContent() {
-  const [tonConnectUI] = useTonConnectUI();
-  const [wallet, setWallet] = useState<ConnectedWallet | null>(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const currentWallet = tonConnectUI.wallet as ConnectedWallet | null;
-    if (currentWallet) {
-      setWallet(currentWallet);
-      navigate('/');
-    } else {
-      navigate('/txform');
-    }
-  }, [tonConnectUI, navigate]);
-
-  return (
-    <Routes>
-      <Route path="/" element={<Main />} />
-      <Route path="/txform" element={<TxForm selectedLanguage={''} />} />
-    </Routes>
-  );
-}
+import MainPage from "./components/main/main";
+import { LanguageProvider } from './components/LanguageContext';
 
 function App() {
   return (
@@ -82,9 +60,15 @@ function App() {
         twaReturnUrl: 'https://t.me/tc_twa_demo_bot/start'
       }}
     >
-      <Router>
-        <AppContent />
-      </Router>
+      <LanguageProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/txform" element={<TxForm selectedLanguage={''} />} />
+            <Route path="/dil" element={<Dil />} />
+          </Routes>
+        </Router>
+      </LanguageProvider>
     </TonConnectUIProvider>
   );
 }

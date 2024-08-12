@@ -1,4 +1,3 @@
-// Modal.tsx
 import React from 'react';
 import './Modal.css';
 
@@ -16,8 +15,8 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, children }) => {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <button className="close-button" onClick={onClose}>
-          Close
+        <button className="modal-close" onClick={onClose}>
+          ×
         </button>
         <div className="modal-content">{children}</div>
       </div>
